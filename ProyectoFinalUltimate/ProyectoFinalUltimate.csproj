@@ -350,6 +350,8 @@
     <Content Include="Views\Home\BorrarContacto.cshtml" />
     <Content Include="Views\Home\BorrarUser.cshtml" />
     <Content Include="Views\Home\MensajesList.cshtml" />
+    <Content Include="Views\Home\CrearMensaje.cshtml" />
+    <Content Include="Views\Home\Register.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

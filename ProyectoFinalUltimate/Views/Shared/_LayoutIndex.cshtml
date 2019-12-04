@@ -26,7 +26,9 @@
                     <h3>MENU DE ENVIOFLAHS</h3>
 
                 </div>
-
+                <div class="btn btn-danger" style="margin-top:8%; margin-left:15%;">
+                    <a href="/Home/CrearMensaje"  style="align-content:center; text-align:center; border-radius:2px; font-size:15px;">REDACTAR MENSAJE</a>
+                </div>
                 <ul class="list-unstyled components">
                     <li>
                         <a href="/Home/Inicio">Inicio</a>
@@ -37,6 +39,10 @@
                     </li>
                     <li>
                         <a href="/Home/ContactoList">ver Contactos</a>
+
+                    </li>
+                    <li>
+                        <a href="/Home/ReporteLoo">Reportes App</a>
 
                     </li>
                     @if (@ViewBag.loginData == "ADMIN")
@@ -51,16 +57,21 @@
 
 
                     }
-                
+
 
 
                     <li>
                         <a href="/Home/MensajesList">Correos Enviados</a>
                     </li>
                 </ul>
-                <ul class="nav navbar-nav">
-                    <li>@Html.ActionLink("Logout", "Index", "Home", new { area = "" }, null)</li>
-                    <li>@Html.ActionLink("API", "Index", "Help", new { area = "" }, null)</li>
+                <ul class="list-unstyled components">
+                    <li>
+                        <a href="/Help/Index">ESTRUCTURA API</a>
+                    </li>
+                    <li>
+                        <a href="/Home/Index">SALIR</a>
+                    </li>
+
                 </ul>
 
             </nav>

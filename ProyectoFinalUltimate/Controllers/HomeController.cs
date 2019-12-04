@@ -100,18 +100,31 @@ namespace ProyectoFinalUltimate.Controllers
 
         public ActionResult CrearUser()
         {
-            User login = (User)Session["UsuarioLogin"];
-            ViewBag.loginData = login.TipoUser.ToString().ToUpper();
-            return View();
+            try
+            {
+                User login = (User)Session["UsuarioLogin"];
+                ViewBag.loginData = login.TipoUser.ToString().ToUpper();
+                return View();
+            }
+            catch(Exception e){
+                return View();
+            }
         }
 
 
         [HttpPost]
         public ActionResult CrearUser(User user)
         {
-            User login = (User)Session["UsuarioLogin"];
-
-            ViewBag.loginData = login.TipoUser.ToString().ToUpper();
+            try
+            {
+                User login = (User)Session["UsuarioLogin"];
+                ViewBag.loginData = login.TipoUser.ToString().ToUpper();
+           
+            }
+            catch (Exception e)
+            {
+                
+            }
 
             using (var client = new HttpClient())
             {
@@ -296,6 +309,27 @@ namespace ProyectoFinalUltimate.Controllers
             User login = (User)Session["UsuarioLogin"];
             ViewBag.tablaUser = userTable.Users;
             ViewBag.loginData = login.TipoUser.ToString().ToUpper();
+            if (contact.Usuario!=null)
+            {
+                foreach (var nombre in userTable.Users)
+                {
+                    if (nombre.Nombre==contact.Usuario)
+                    {
+                        contact.UsuarioId = nombre.Id;
+                    }
+
+                }
+                
+            }
+            else
+            {
+                contact.Usuario = login.Nombre;
+                contact.UsuarioId = login.Id;
+            }
+
+            
+  
+
             using (var client = new HttpClient())
             {
                 client.BaseAddress = new Uri("https://localhost:44300/api/Contacts");
@@ -442,5 +476,152 @@ namespace ProyectoFinalUltimate.Controllers
             return View(mensajes);
         }
 
+
+        public ActionResult CrearMensaje()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public ActionResult CrearMensaje(Mensajes mensajes)
+        {
+            try
+            {
+                User login = (User)Session["UsuarioLogin"];
+                ViewBag.loginData = login.TipoUser.ToString().ToUpper();
+
+            }
+            catch (Exception e)
+            {
+
+            }
+
+            using (var client = new HttpClient())
+            {
+                client.BaseAddress = new Uri("https://localhost:44300/api/Mensajes");
+
+
+                var postTask = client.PostAsJsonAsync<Mensajes>("Mensajes", mensajes);
+                postTask.Wait();
+
+                var result = postTask.Result;
+                if (result.IsSuccessStatusCode)
+                {
+
+                    try
+                    {
+                        string EmailOrigen = mensajes.Usuario_Envio.ToString();
+                        string EmailDestino = mensajes.Contactos_Envio.ToString();
+                        string pass = "erickelcano";
+                        MailMessage oMailMessage = new MailMessage(EmailOrigen, EmailDestino, mensajes.Asunto,mensajes.Mensaje);
+                        oMailMessage.IsBodyHtml = true;
+                        SmtpClient oSmtpCliente = new SmtpClient("smtp." + "gmail" + ".com");
+
+                        oSmtpCliente.EnableSsl = true;
+                        oSmtpCliente.UseDefaultCredentials = false;
+                        oSmtpCliente.Port = 587;
+                        oSmtpCliente.Credentials = new System.Net.NetworkCredential(EmailOrigen, pass);
+                        oSmtpCliente.Send(oMailMessage);
+                        oSmtpCliente.Dispose();
+
+                        Response.Write("<script>alert('El mensaje fue enviado con exito')</script>");
+                        //ScriptManager.RegisterClientScriptBlock(this, this.GetType(), "Notificacion", "alert('Se ha enviado el mensaje correctamente')", true);
+                        ViewBag.correoValidation = "El correo llego exitoso";
+                    }
+                    catch (Exception e)
+                    {
+                        ModelState.AddModelError(string.Empty, "El servidor est en Error" + e.ToString());
+                    }
+
+
+                    return RedirectToAction("Index");
+                }
+            }
+            return View();
+        
+        }
+
+
+        public ActionResult Register()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public ActionResult Register(User user)
+        {
+
+            try
+            {
+                User login = (User)Session["UsuarioLogin"];
+                ViewBag.loginData = login.TipoUser.ToString().ToUpper();
+
+            }
+            catch (Exception e)
+            {
+
+            }
+
+            using (var client = new HttpClient())
+            {
+                client.BaseAddress = new Uri("https://localhost:44300/api/Users");
+
+
+                var postTask = client.PostAsJsonAsync<User>("Users", user);
+                postTask.Wait();
+
+                var result = postTask.Result;
+                if (result.IsSuccessStatusCode)
+                {
+
+                    try
+                    {
+                        string EmailOrigen = "erickrosarioalcantara116@gmail.com";
+                        string EmailDestino = user.CorreoElectronico.ToString();
+                        string pass = "erickelcano";
+                        MailMessage oMailMessage = new MailMessage(EmailOrigen, EmailDestino, "Se ha registrado un usuario en la aplicación EnvioFlhas ", "Saludos &nbsp;  " + user.Nombre.ToUpper() + "&nbsp;  " + user.Apellido.ToUpper() + " <br/><br/>" + " Se le informa que ha sido creado un usuario con la siguientes:&nbsp;<br/><b>Nombre:</b>" + user.Nombre + "<br/><b>Apellido:&nbsp;</b>" + user.Apellido + "<br/><br/><b>Credenciales de la App EnviosFlahs</b><br/> <b>Usuario:&nbsp;     </b>" + user.CorreoElectronico + " <br/> <b>Contraseña:&nbsp;    </b>" + user.ContraApp + "");
+                        oMailMessage.IsBodyHtml = true;
+
+                        if (user.TipoProveedor == TipoProveedor.Outlook)
+                        {
+                            proveedor = "mail.outlook";
+                        }
+                        else if (user.TipoProveedor == TipoProveedor.Gmail)
+                        {
+                            proveedor = "gmail";
+                        }
+                        else if (user.TipoProveedor == TipoProveedor.Yahoo)
+                        {
+                            proveedor = "mail.yahoo";
+                        }
+                        else if (user.TipoProveedor == TipoProveedor.Hotmail)
+                        {
+                            proveedor = "live";
+
+                        }
+                        SmtpClient oSmtpCliente = new SmtpClient("smtp." + proveedor + ".com");
+
+                        oSmtpCliente.EnableSsl = true;
+                        oSmtpCliente.UseDefaultCredentials = false;
+                        oSmtpCliente.Port = 587;
+                        oSmtpCliente.Credentials = new System.Net.NetworkCredential(EmailOrigen, pass);
+                        oSmtpCliente.Send(oMailMessage);
+                        oSmtpCliente.Dispose();
+
+                        Response.Write("<script>alert('El mensaje fue enviado con exito')</script>");
+                        //ScriptManager.RegisterClientScriptBlock(this, this.GetType(), "Notificacion", "alert('Se ha enviado el mensaje correctamente')", true);
+                        ViewBag.correoValidation = "El correo llego exitoso";
+                    }
+                    catch (Exception e)
+                    {
+                        ModelState.AddModelError(string.Empty, "El servidor est en Error" + e.ToString());
+                    }
+
+
+                    return RedirectToAction("Index");
+                }
+            }
+            return View();
+        }
     }
 }
