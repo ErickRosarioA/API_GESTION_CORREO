@@ -26,7 +26,7 @@ namespace ProyectoFinalUltimate.Controllers
                 ViewBag.loginData = login.TipoUser.ToString().ToUpper();
             } catch (Exception e) {
 
-                return RedirectToAction("Index");
+                return View("Error");
 
             }
             return View();  
@@ -68,9 +68,16 @@ namespace ProyectoFinalUltimate.Controllers
         [HttpGet]
         public ActionResult UserList()
         {
-            User login = (User)Session["UsuarioLogin"];
+            try {
 
-            ViewBag.loginData = login.TipoUser.ToString().ToUpper();
+                User login = (User)Session["UsuarioLogin"];
+
+                ViewBag.loginData = login.TipoUser.ToString().ToUpper();
+            }
+            catch(Exception e)
+            {
+                return View("Error");
+            }
 
             IEnumerable<User> users = null;
             using (var client = new HttpClient())
@@ -107,7 +114,7 @@ namespace ProyectoFinalUltimate.Controllers
                 return View();
             }
             catch(Exception e){
-                return View();
+                return View("Error");
             }
         }
 
@@ -123,7 +130,7 @@ namespace ProyectoFinalUltimate.Controllers
             }
             catch (Exception e)
             {
-                
+                return View("Error");  
             }
 
             using (var client = new HttpClient())
@@ -189,9 +196,17 @@ namespace ProyectoFinalUltimate.Controllers
 
         public ActionResult EditarUser(int id)
         {
-            User login = (User)Session["UsuarioLogin"];
+            try
+            {
 
-            ViewBag.loginData = login.TipoUser.ToString().ToUpper();
+                User login = (User)Session["UsuarioLogin"];
+
+                ViewBag.loginData = login.TipoUser.ToString().ToUpper();
+            }
+            catch (Exception e)
+            {
+                return View("Error");
+            }
             User user = null;
 
             using (var client = new HttpClient())
@@ -216,9 +231,17 @@ namespace ProyectoFinalUltimate.Controllers
         [HttpPost]
         public ActionResult EditarUser(User user)
         {
-            User login = (User)Session["UsuarioLogin"];
+            try
+            {
 
-            ViewBag.loginData = login.TipoUser.ToString().ToUpper();
+                User login = (User)Session["UsuarioLogin"];
+
+                ViewBag.loginData = login.TipoUser.ToString().ToUpper();
+            }
+            catch (Exception e)
+            {
+                return View("Error");
+            }
             using (var client = new HttpClient())
             {
                 client.BaseAddress = new Uri("https://localhost:44300/api/Users/");
@@ -240,9 +263,17 @@ namespace ProyectoFinalUltimate.Controllers
 
         public ActionResult BorrarUser(int id)
         {
-            User login = (User)Session["UsuarioLogin"];
+            try
+            {
 
-            ViewBag.loginData = login.TipoUser.ToString().ToUpper();
+                User login = (User)Session["UsuarioLogin"];
+
+                ViewBag.loginData = login.TipoUser.ToString().ToUpper();
+            }
+            catch (Exception e)
+            {
+                return View("Error");
+            }
             using (var client = new HttpClient())
             {
                 client.BaseAddress = new Uri("https://localhost:44300/api/");
@@ -264,9 +295,17 @@ namespace ProyectoFinalUltimate.Controllers
         [HttpGet]
         public ActionResult ContactoList()
         {
-            User login = (User)Session["UsuarioLogin"];
+            try
+            {
 
-            ViewBag.loginData = login.TipoUser.ToString().ToUpper();
+                User login = (User)Session["UsuarioLogin"];
+
+                ViewBag.loginData = login.TipoUser.ToString().ToUpper();
+            }
+            catch (Exception e)
+            {
+                return View("Error");
+            }
             IEnumerable<Contact> contact = null;
             using (var client = new HttpClient())
             {
@@ -297,9 +336,17 @@ namespace ProyectoFinalUltimate.Controllers
 
         public ActionResult CrearContacto()
         {
-            User login = (User)Session["UsuarioLogin"];
-            ViewBag.tablaUser = userTable.Users;
-            ViewBag.loginData = login.TipoUser.ToString().ToUpper();
+
+            try
+            {
+                User login = (User)Session["UsuarioLogin"];
+                ViewBag.tablaUser = userTable.Users;
+                ViewBag.loginData = login.TipoUser.ToString().ToUpper();
+            }
+            catch (Exception e)
+            {
+                return View("Error");
+            }
             return View();
         }
 
@@ -307,8 +354,16 @@ namespace ProyectoFinalUltimate.Controllers
         public ActionResult CrearContacto(Contact contact)
         {
             User login = (User)Session["UsuarioLogin"];
-            ViewBag.tablaUser = userTable.Users;
-            ViewBag.loginData = login.TipoUser.ToString().ToUpper();
+            try
+            {
+               
+                ViewBag.tablaUser = userTable.Users;
+                ViewBag.loginData = login.TipoUser.ToString().ToUpper();
+            }
+            catch (Exception e)
+            {
+                return View("Error");
+            }
             if (contact.Usuario!=null)
             {
                 foreach (var nombre in userTable.Users)
@@ -479,7 +534,22 @@ namespace ProyectoFinalUltimate.Controllers
 
         public ActionResult CrearMensaje()
         {
-            return View();
+            try
+            {
+
+                User login = (User)Session["UsuarioLogin"];
+                ViewBag.tablaUser = userTable.Users;
+                ViewBag.tablaContacto = userTable.Contacts;
+                ViewBag.loginData = login.TipoUser.ToString().ToUpper();
+                ViewBag.Correo = login.CorreoElectronico.ToString();
+                ViewBag.IdUser = login.Id.ToString();
+            }
+            catch(Exception e)
+            {
+                return View("Error");
+            }
+
+                return View();
         }
 
         [HttpPost]
@@ -488,11 +558,71 @@ namespace ProyectoFinalUltimate.Controllers
             try
             {
                 User login = (User)Session["UsuarioLogin"];
+                ViewBag.tablaUser = userTable.Users;
+                ViewBag.tablaContacto = userTable.Contacts;
                 ViewBag.loginData = login.TipoUser.ToString().ToUpper();
+                ViewBag.Correo = login.CorreoElectronico.ToString();
+                ViewBag.IdUser = login.Id.ToString();
+
+                if (login.TipoUser!=TipoUser.ADMIN)
+                {
+
+                    mensajes.Usuario_Envio = login.CorreoElectronico;
+                    mensajes.Fk_User = login.Id;
+                    DateTime now = DateTime.Now;
+                    mensajes.Fecha_Envio = now;
+                }
+                else
+                {
+
+
+                    foreach (var users in userTable.Users)
+                    {
+                        if (users.CorreoElectronico == mensajes.Usuario_Envio)
+                        {
+                            mensajes.Fk_User = users.Id;
+                        }
+
+                    }
+                    DateTime now = DateTime.Now;
+                    mensajes.Fecha_Envio = now;
+                }
+
+
+                try
+                {
+                    string EmailOrigen = mensajes.Usuario_Envio.ToString();
+                    string EmailDestino = mensajes.Contactos_Envio.ToString();
+                    string pass = "erickelcano";
+                    MailMessage oMailMessage = new MailMessage(EmailOrigen, EmailDestino, mensajes.Asunto, mensajes.Mensaje);
+                    oMailMessage.IsBodyHtml = true;
+                    SmtpClient oSmtpCliente = new SmtpClient("smtp." + "gmail" + ".com");
+
+                    oSmtpCliente.EnableSsl = true;
+                    oSmtpCliente.UseDefaultCredentials = false;
+                    oSmtpCliente.Port = 587;
+                    oSmtpCliente.Credentials = new System.Net.NetworkCredential(EmailOrigen, pass);
+                    oSmtpCliente.Send(oMailMessage);
+                    oSmtpCliente.Dispose();
+                    mensajes.Estatus = "Enviado";
+                    mensajes.Mensaje_Error = "Ninguno";
+                    Response.Write("<script>alert('El mensaje fue enviado con exito')</script>");
+                    //ScriptManager.RegisterClientScriptBlock(this, this.GetType(), "Notificacion", "alert('Se ha enviado el mensaje correctamente')", true);
+                    ViewBag.correoValidation = "El correo llego exitoso";
+                }
+                catch (Exception e)
+                {
+
+                    mensajes.Mensaje_Error = e.Message;
+                    mensajes.Estatus = "ERROR";
+                    ModelState.AddModelError(string.Empty, "El servidor est en Error" + e.ToString());
+                }
+
 
             }
             catch (Exception e)
             {
+                return View("Error");
 
             }
 
@@ -508,33 +638,9 @@ namespace ProyectoFinalUltimate.Controllers
                 if (result.IsSuccessStatusCode)
                 {
 
-                    try
-                    {
-                        string EmailOrigen = mensajes.Usuario_Envio.ToString();
-                        string EmailDestino = mensajes.Contactos_Envio.ToString();
-                        string pass = "erickelcano";
-                        MailMessage oMailMessage = new MailMessage(EmailOrigen, EmailDestino, mensajes.Asunto,mensajes.Mensaje);
-                        oMailMessage.IsBodyHtml = true;
-                        SmtpClient oSmtpCliente = new SmtpClient("smtp." + "gmail" + ".com");
-
-                        oSmtpCliente.EnableSsl = true;
-                        oSmtpCliente.UseDefaultCredentials = false;
-                        oSmtpCliente.Port = 587;
-                        oSmtpCliente.Credentials = new System.Net.NetworkCredential(EmailOrigen, pass);
-                        oSmtpCliente.Send(oMailMessage);
-                        oSmtpCliente.Dispose();
-
-                        Response.Write("<script>alert('El mensaje fue enviado con exito')</script>");
-                        //ScriptManager.RegisterClientScriptBlock(this, this.GetType(), "Notificacion", "alert('Se ha enviado el mensaje correctamente')", true);
-                        ViewBag.correoValidation = "El correo llego exitoso";
-                    }
-                    catch (Exception e)
-                    {
-                        ModelState.AddModelError(string.Empty, "El servidor est en Error" + e.ToString());
-                    }
 
 
-                    return RedirectToAction("Index");
+                    return RedirectToAction("Inicio");
                 }
             }
             return View();
