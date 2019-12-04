@@ -1,0 +1,79 @@
+﻿@model IEnumerable<ProyectoFinalUltimate.Models.User>
+
+@{
+    ViewBag.Title = "UserList";
+    Layout = "~/Views/Shared/_LayoutIndex.cshtml";
+}
+
+<h2>UserList</h2>
+
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Nombre)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Apellido)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.TipoUser)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.FechaNacimiento)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.CorreoElectronico)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.TipoProveedor)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.ContraCorreo)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.ContraApp)
+        </th>
+        <th></th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Nombre)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Apellido)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.TipoUser)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.FechaNacimiento)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.CorreoElectronico)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.TipoProveedor)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ContraCorreo , new { @Text="********"})
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ContraApp ,new { @Text="*********"} )
+            </td>
+            <td>
+                @Html.ActionLink("Edit", "EditarUser", new { id = item.Id }) |
+                @Html.ActionLink("Delete", "BorrarUser", new { id = item.Id })
+            </td>
+        </tr>
+    }
+    <tr>
+        <td>
+            @Html.ValidationSummary(true, "El api se encuentra vacia", new { @class = "text-danger" })
+        </td>
+    </tr>
+
+
+</table>

@@ -1,0 +1,76 @@
+﻿@model IEnumerable<ProyectoFinalUltimate.Models.Mensajes>
+
+@{
+    ViewBag.Title = "MensajesList";
+    Layout = "~/Views/Shared/_LayoutIndex.cshtml";
+}
+
+<h2>Lista de Mensajes</h2>
+
+
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Usuario_Envio)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Contactos_Envio)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Asunto)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Mensaje)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Fecha_Envio)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Estatus)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Mensaje_Error)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Fk_User)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.FK_Contact)
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.Usuario_Envio)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Contactos_Envio)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Asunto)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Mensaje)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Fecha_Envio)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Estatus)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Mensaje_Error)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Fk_User)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.FK_Contact)
+        </td>
+      
+    </tr>
+}
+
+</table>
